@@ -1,24 +1,34 @@
-import React from "react";
+import React, {  useEffect } from "react";
 import { Button, Form, Input, notification  } from 'antd';
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const Login = () => {
   const navigate = useNavigate();
+  
+  useEffect(()=> {
+    axios.get('https://localhost:44372/').then(res => {
+      if(res.data.valid){
+        navigate("/")
+      }else{
+        navigate("/login")
+      }
+    }).catch(err => console.log(err))
+  })
+
   const onFinish = (values) => {
-    console.log(values);
     const {username, password} = values
     if(username === 'admin' && password === '123456'){
-      notification.open({ 
+      notification.success({ 
         message: 'Đăng nhập thành công', 
-        description: 
-          'Đang chuyển tới trang chủ', 
       }); 
       navigate("/")
     }
+    
   };
   const onFinishFailed = (errorInfo) => {
     const {username, password} = errorInfo
     if(username !== 'admin' && password !== '123456'){
-      notification.open({ 
+      notification.error({ 
         message: 'Đăng nhập thất bại', 
         description: 
           'Sai tài khoản hoặc mật khẩu', 
@@ -27,12 +37,11 @@ const Login = () => {
   };
   return (
     <div className="login-body">
-      <div className="container">
-        <Form name="basic" labelCol={{span: 8,}}
-            wrapperCol={{
-              span: 16,
-            }}
-            className="form-login"
+      <div className="container d-flex flex-column justify-content-center gap-12">
+        <div className="title-login">
+          Đăng nhập
+        </div>
+        <Form name="basic" 
             initialValues={{
               remember: true,
             }}
@@ -67,16 +76,23 @@ const Login = () => {
             </Form.Item>
 
             <Form.Item
-              wrapperCol={{
-                offset: 8,
-                span: 16,
-              }}
             >
-              <Button type="primary" htmlType="submit" >
+              <Button type="primary" htmlType="submit" className="w-100">
                 Submit
               </Button>
             </Form.Item>
-          </Form>
+        </Form>
+        <div className="warning d-flex flex-column justify-content-start gap-8">
+            <div className="fst-italic">
+              Chú ý:
+            </div>
+            <div className="fst-italic">
+              Sinh viên sử dụng tài khoản trên cổng thông tin đào tạo Đại học hệ chính quy để đăng nhập vào hệ thống
+            </div>
+            <div className="fst-italic">
+              Nếu gặp khó khăn khi đăng nhập sinh viên liên hệ email: phongdaotao@nuce.edu.vn Hotline: 096258435
+            </div>
+        </div>
       </div>
     </div>
   )
